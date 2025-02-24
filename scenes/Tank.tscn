@@ -1,0 +1,54 @@
+[gd_scene load_steps=6 format=3 uid="uid://caib1bfagawm1"]
+
+[ext_resource type="Script" path="res://scripts/Tank/TankController.cs" id="1_2k4m3"]
+[ext_resource type="Script" path="res://scripts/Tank/TankStats.cs" id="2_y6k4n"]
+[ext_resource type="Script" path="res://scripts/Tank/TankWeapon.cs" id="3_l5m6n"]
+[ext_resource type="PackedScene" uid="uid://dsvxc6nyh576" path="res://scenes/Projectile.tscn" id="5_projectile"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_1"]
+radius = 32.0
+
+[node name="Tank" type="CharacterBody2D"]
+collision_layer = 2
+collision_mask = 13
+script = ExtResource("1_2k4m3")
+
+[node name="TankBody" type="Node2D" parent="."]
+
+[node name="Base" type="Polygon2D" parent="TankBody"]
+color = Color(0.2, 0.4, 0.8, 1)
+polygon = PackedVector2Array(-32, 0, -22.6274, -22.6274, 0, -32, 22.6274, -22.6274, 32, 0, 22.6274, 22.6274, 0, 32, -22.6274, 22.6274)
+
+[node name="Border" type="Polygon2D" parent="TankBody"]
+z_index = -1
+color = Color(0.15, 0.3, 0.6, 1)
+polygon = PackedVector2Array(-34, 0, -24.0416, -24.0416, 0, -34, 24.0416, -24.0416, 34, 0, 24.0416, 24.0416, 0, 34, -24.0416, 24.0416)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_1")
+
+[node name="TankStats" type="Node" parent="."]
+script = ExtResource("2_y6k4n")
+
+[node name="TankHealthBar" parent="TankStats" instance=ExtResource("5_projectile")]
+
+[node name="TankWeapon" type="Node2D" parent="."]
+rotation = -1.5708
+script = ExtResource("3_l5m6n")
+ProjectileScene = ExtResource("5_projectile")
+
+[node name="CannonContainer" type="Node2D" parent="TankWeapon"]
+
+[node name="Cannon" type="Node2D" parent="TankWeapon/CannonContainer"]
+
+[node name="CannonBase" type="Polygon2D" parent="TankWeapon/CannonContainer/Cannon"]
+z_index = -1
+color = Color(0.15, 0.3, 0.6, 1)
+polygon = PackedVector2Array(-16, -48, 16, -48, 16, 0, -16, 0)
+
+[node name="CannonTop" type="Polygon2D" parent="TankWeapon/CannonContainer/Cannon"]
+color = Color(0.2, 0.4, 0.8, 1)
+polygon = PackedVector2Array(-14, -46, 14, -46, 14, -2, -14, -2)
+
+[node name="ShootPoint" type="Marker2D" parent="TankWeapon/CannonContainer/Cannon"]
+position = Vector2(0, -48)

@@ -1,0 +1,287 @@
+[gd_scene load_steps=11 format=3 uid="uid://cb8nfxouaqk0a"]
+
+[ext_resource type="Script" path="res://scripts/Game/GameManager.cs" id="1_m4k3n"]
+[ext_resource type="PackedScene" uid="uid://drdikqndfv34e" path="res://scenes/Shape.tscn" id="2_n5k4m"]
+[ext_resource type="PackedScene" uid="uid://caib1bfagawm1" path="res://scenes/Tank.tscn" id="3_p6k5n"]
+[ext_resource type="Script" path="res://scripts/UI/HUD.cs" id="4_q7l6m"]
+[ext_resource type="Script" path="res://scripts/UI/UpgradeMenu.cs" id="5_r8m7n"]
+[ext_resource type="Script" path="res://scripts/Game/ArenaBorder.cs" id="7_border"]
+[ext_resource type="PackedScene" uid="uid://c8j6y4n2p1m8v" path="res://scenes/AISpawner.tscn" id="8_spawner"]
+[ext_resource type="Script" path="res://scripts/UI/Minimap.cs" id="9_minimap"]
+[ext_resource type="Theme" uid="uid://d5wgqnweet82" path="res://resources/styles/HUD.tres" id="10_hud_theme"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_minimap"]
+bg_color = Color(0.08, 0.08, 0.08, 0.95)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.4, 0.4, 0.4, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.3)
+shadow_size = 4
+
+[node name="Main" type="Node2D"]
+
+[node name="GameManager" type="Node" parent="."]
+script = ExtResource("1_m4k3n")
+ShapeScene = ExtResource("2_n5k4m")
+
+[node name="ArenaBorder" type="Node2D" parent="GameManager"]
+z_index = -1
+script = ExtResource("7_border")
+
+[node name="Border" type="Line2D" parent="GameManager/ArenaBorder"]
+width = 4.0
+default_color = Color(0.3, 0.3, 0.3, 1)
+
+[node name="Background" type="Polygon2D" parent="GameManager/ArenaBorder"]
+z_index = -1
+color = Color(0.15, 0.15, 0.15, 1)
+
+[node name="AISpawner" parent="GameManager" instance=ExtResource("8_spawner")]
+
+[node name="Tank" parent="." instance=ExtResource("3_p6k5n")]
+
+[node name="Camera2D" type="Camera2D" parent="Tank"]
+position_smoothing_enabled = true
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="HUD" type="Control" parent="CanvasLayer"]
+process_mode = 3
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+theme = ExtResource("10_hud_theme")
+script = ExtResource("4_q7l6m")
+
+[node name="MinimapContainer" type="SubViewportContainer" parent="CanvasLayer/HUD"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -320.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = 320.0
+grow_horizontal = 0
+size_flags_horizontal = 8
+size_flags_vertical = 0
+
+[node name="Background" type="Panel" parent="CanvasLayer/HUD/MinimapContainer"]
+show_behind_parent = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_minimap")
+
+[node name="Minimap" type="SubViewport" parent="CanvasLayer/HUD/MinimapContainer"]
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(300, 300)
+render_target_update_mode = 4
+script = ExtResource("9_minimap")
+
+[node name="HealthBar" type="ProgressBar" parent="CanvasLayer/HUD"]
+custom_minimum_size = Vector2(200, 20)
+layout_mode = 0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 220.0
+offset_bottom = 40.0
+
+[node name="ExperienceBar" type="ProgressBar" parent="CanvasLayer/HUD"]
+custom_minimum_size = Vector2(200, 20)
+layout_mode = 0
+offset_left = 20.0
+offset_top = 50.0
+offset_right = 220.0
+offset_bottom = 70.0
+
+[node name="HealthLabel" type="Label" parent="CanvasLayer/HUD"]
+layout_mode = 0
+offset_left = 230.0
+offset_top = 20.0
+offset_right = 380.0
+offset_bottom = 40.0
+text = "Health: 100/100"
+
+[node name="LevelLabel" type="Label" parent="CanvasLayer/HUD"]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 80.0
+offset_right = 120.0
+offset_bottom = 100.0
+text = "Level: 1"
+
+[node name="ExperienceLabel" type="Label" parent="CanvasLayer/HUD"]
+layout_mode = 0
+offset_left = 230.0
+offset_top = 50.0
+offset_right = 380.0
+offset_bottom = 70.0
+text = "XP: 0/100"
+
+[node name="LevelUpNotification" type="Label" parent="CanvasLayer/HUD"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -100.0
+offset_top = -100.0
+offset_right = 100.0
+offset_bottom = -60.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 32
+text = "Level Up!"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="DeathScreen" type="Control" parent="CanvasLayer/HUD"]
+process_mode = 3
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+
+[node name="Overlay" type="ColorRect" parent="CanvasLayer/HUD/DeathScreen"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.6)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/HUD/DeathScreen"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -150.0
+offset_top = -120.0
+offset_right = 150.0
+offset_bottom = 120.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 20
+
+[node name="GameOverLabel" type="Label" parent="CanvasLayer/HUD/DeathScreen/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 48
+text = "Game Over"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="CanvasLayer/HUD/DeathScreen/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="FinalScore" type="Label" parent="CanvasLayer/HUD/DeathScreen/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Final Score
+Level: 1
+Experience: 0"
+horizontal_alignment = 1
+
+[node name="HSeparator2" type="HSeparator" parent="CanvasLayer/HUD/DeathScreen/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 30
+
+[node name="RestartButton" type="Button" parent="CanvasLayer/HUD/DeathScreen/VBoxContainer"]
+custom_minimum_size = Vector2(200, 50)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 24
+text = "Restart Game"
+
+[node name="UpgradeMenu" type="Control" parent="CanvasLayer"]
+visible = false
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("5_r8m7n")
+
+[node name="Panel" type="Panel" parent="CanvasLayer/UpgradeMenu"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -100.0
+offset_top = -150.0
+offset_right = 100.0
+offset_bottom = 150.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/UpgradeMenu/Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Title" type="Label" parent="CanvasLayer/UpgradeMenu/Panel/VBoxContainer"]
+layout_mode = 2
+text = "Level Up!"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="CanvasLayer/UpgradeMenu/Panel/VBoxContainer"]
+layout_mode = 2
+
+[node name="PointsLabel" type="Label" parent="CanvasLayer/UpgradeMenu/Panel/VBoxContainer"]
+layout_mode = 2
+text = "Available Points: 0"
+horizontal_alignment = 1
+
+[node name="HSeparator2" type="HSeparator" parent="CanvasLayer/UpgradeMenu/Panel/VBoxContainer"]
+layout_mode = 2
+
+[node name="HealthUpgrade" type="Button" parent="CanvasLayer/UpgradeMenu/Panel/VBoxContainer"]
+layout_mode = 2
+text = "Increase Health"
+
+[node name="ReloadUpgrade" type="Button" parent="CanvasLayer/UpgradeMenu/Panel/VBoxContainer"]
+layout_mode = 2
+text = "Faster Reload"
+
+[node name="DamageUpgrade" type="Button" parent="CanvasLayer/UpgradeMenu/Panel/VBoxContainer"]
+layout_mode = 2
+text = "More Damage"
+
+[connection signal="pressed" from="CanvasLayer/HUD/DeathScreen/VBoxContainer/RestartButton" to="CanvasLayer/HUD" method="OnRestartPressed"]
+[connection signal="pressed" from="CanvasLayer/UpgradeMenu/Panel/VBoxContainer/HealthUpgrade" to="CanvasLayer/UpgradeMenu" method="OnUpgradeHealth"]
+[connection signal="pressed" from="CanvasLayer/UpgradeMenu/Panel/VBoxContainer/ReloadUpgrade" to="CanvasLayer/UpgradeMenu" method="OnUpgradeReload"]
+[connection signal="pressed" from="CanvasLayer/UpgradeMenu/Panel/VBoxContainer/DamageUpgrade" to="CanvasLayer/UpgradeMenu" method="OnUpgradeDamage"]

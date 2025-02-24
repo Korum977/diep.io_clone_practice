@@ -1,0 +1,67 @@
+[gd_scene load_steps=6 format=3 uid="uid://drdikqndfv34e"]
+
+[ext_resource type="Script" path="res://scripts/Objects/Shape.cs" id="1_k4m3n"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_1"]
+radius = 15.0
+
+[sub_resource type="Animation" id="Animation_reset"]
+resource_name = "RESET"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_fade"]
+resource_name = "fade_out"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_health"]
+_data = {
+"RESET": SubResource("Animation_reset"),
+"fade_out": SubResource("Animation_fade")
+}
+
+[node name="Shape" type="Area2D"]
+collision_layer = 8
+collision_mask = 14
+script = ExtResource("1_k4m3n")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_1")
+
+[node name="ShapeVisual" type="Polygon2D" parent="."]
+color = Color(0.4, 0.8, 0.2, 1)
+polygon = PackedVector2Array(-15, -15, 15, -15, 15, 15, -15, 15)
+
+[node name="HealthBar" type="ProgressBar" parent="."]
+offset_left = -20.0
+offset_top = 20.0
+offset_right = 20.0
+offset_bottom = 24.0
+theme_override_colors/font_color = Color(0, 0, 0, 0)
+show_percentage = false
+
+[node name="FadeAnimation" type="AnimationPlayer" parent="HealthBar"]
+libraries = {
+"": SubResource("AnimationLibrary_health")
+}
